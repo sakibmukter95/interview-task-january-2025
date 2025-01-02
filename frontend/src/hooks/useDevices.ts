@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Device } from "../types/device";
+import { Device } from "../model/Device";
 
 const API_URL = "http://localhost:8000/api/devices";
 

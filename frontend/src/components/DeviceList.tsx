@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
-import { Device } from "../types/device";
+import { Device, DeviceStatus } from "../model/Device";
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 interface DeviceListProps {
   devices: Device[]; // Array of devices passed as props
-  onDeviceSelect: (device: Device) => void; // Callback for selecting a device
+  onDeviceSelect: (device: Device | null) => void; // Callback for selecting a device
 }
 
 const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
-  const [filterStatus, setFilterStatus] = useState<
-    "all" | "active" | "inactive"
-  >("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | DeviceStatus>(
+    "all"
+  );
   const [selectedDeviceId, setSelectedDeviceId] = useState<number | null>(null);
 
   // Filter devices based on the selected status
@@ -62,12 +62,12 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
             className="p-2 border rounded"
             value={filterStatus}
             onChange={(e) =>
-              setFilterStatus(e.target.value as "all" | "active" | "inactive")
+              setFilterStatus(e.target.value as "all" | DeviceStatus)
             }
           >
             <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
+            <option value={DeviceStatus.Active}>Active</option>
+            <option value={DeviceStatus.Inactive}>Inactive</option>
           </select>
         </div>
       </div>

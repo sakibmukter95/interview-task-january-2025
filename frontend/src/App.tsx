@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Map from "./components/Map";
 import DeviceList from "./components/DeviceList";
 import { useDevices } from "./hooks/useDevices";
-import { Device } from "./types/device";
+import { Device } from "./model/Device";
 import Headers from "./components/Header";
 
 function App(): React.JSX.Element {
