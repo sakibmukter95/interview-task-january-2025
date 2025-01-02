@@ -3,29 +3,49 @@ import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { Device } from "../types/device";
 
-interface Props {
-  selectedDevice?: Device;
+interface MapProps {
+  devices: Device[]; // Array of all devices
+  selectedDevice?: Device; // Currently selected device
 }
 
-const Map: React.FC<Props> = ({ selectedDevice }) => {
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiaHNqb2hhbnNlbiIsImEiOiJjbTVlOWQ1cDAyNnR4MmxyNzJtZmhvMmVmIn0.aRUwNHNNmYO7e0TrCs7Ksg";
 
-  console.log("Got the device information in Map", selectedDevice);
-
+  const Map: React.FC<MapProps> = ({ devices, selectedDevice }) => {
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
 
-  useEffect(() => {
-    mapboxgl.accessToken = "pk.eyJ1IjoiaHNqb2hhbnNlbiIsImEiOiJjbTVlOWQ1cDAyNnR4MmxyNzJtZmhvMmVmIn0.aRUwNHNNmYO7e0TrCs7Ksg";
-    mapRef.current = new mapboxgl.Map({
-      container: mapContainerRef.current,
-    });
-
-    return () => {
-      mapRef.current.remove();
+    // Default map view coordinates and zoom level
+    const defaultView: { center: [number, number]; zoom: number } = {
+      center: [0, 0], // Center of the map (longitude, latitude)
+      zoom: 2,
     };
-  }, []);
+  
+    // Initialize the Mapbox map
+    useEffect(() => {
+      if (mapRef.current || !mapContainerRef.current) return;
+  
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        center: defaultView.center,
+        zoom: defaultView.zoom,
+      });
+  
+      // Add all device markers to the map initially
+      devices.forEach((device) => {
+        new mapboxgl.Marker()
+          .setLngLat([device.longitude, device.latitude])
+          .addTo(mapRef.current!);
+      });
+    }, [devices]);
 
-  return <div className="h-full w-full rounded-lg" id="map-container" ref={mapContainerRef} />;
-}
+  return (
+    <div
+      className="h-full w-full rounded-lg"
+      id="map-container"
+      ref={mapContainerRef}
+    />
+  );
+};
 
 export default Map;
