@@ -34,7 +34,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
 
   // Row Class Rules for Conditional Styling
   const rowClassRules = {
-    "bg-gray-200": (params: any) => params.data.id === selectedDeviceId, // Apply gray background for selected row
+    "bg-gray-200": (params: any) => params.data.id === selectedDeviceId,
   };
 
   // Handle Row Click
