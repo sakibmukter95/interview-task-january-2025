@@ -13,6 +13,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
   const [filterStatus, setFilterStatus] = useState<
     "all" | "active" | "inactive"
   >("all");
+  const [selectedDeviceId, setSelectedDeviceId] = useState<number | null>(null);
 
   // Filter devices based on the selected status
   const filteredDevices = devices.filter(
@@ -24,11 +25,30 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
     { headerName: "Name", field: "name", sortable: true, filter: true },
     { headerName: "Status", field: "status", sortable: true, filter: true },
     {
-      headerName: "Location",
+      headerName: "Location (latitude, longitude)", flex: 1.5,
       valueGetter: (params: any) =>
         `${params.data.latitude}, ${params.data.longitude}`,
     },
   ]);
+
+    // Row Class Rules for Conditional Styling
+    const rowClassRules = {
+      "bg-gray-200": (params: any) =>
+        params.data.id === selectedDeviceId, // Apply gray background for selected row
+    };
+  
+    // Handle Row Click
+    const handleRowClick = (row: any) => {
+      if (row.data.id === selectedDeviceId) {
+        // Reset selection if the same row is clicked again
+        setSelectedDeviceId(null);
+        onDeviceSelect(null);
+      } else {
+        setSelectedDeviceId(row.data.id);
+        onDeviceSelect(row.data);
+      }
+    };
+    
 
   return (
     <div className="h-full w-full">
@@ -51,7 +71,8 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
       <AgGridReact
         rowData={filteredDevices}
         columnDefs={columns}
-        onRowClicked={(row) => onDeviceSelect(row.data)}
+        rowClassRules={rowClassRules} // Apply conditional styling
+        onRowClicked={handleRowClick} // Handle row clicks
         domLayout="autoHeight"
         pagination={true}
         paginationPageSize={10}

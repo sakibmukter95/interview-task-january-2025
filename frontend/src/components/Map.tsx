@@ -1,8 +1,16 @@
 import React, { useRef, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { Device } from "../types/device";
 
-export default function Map() {
+interface Props {
+  selectedDevice?: Device;
+}
+
+const Map: React.FC<Props> = ({ selectedDevice }) => {
+
+  console.log("Got the device information in Map", selectedDevice);
+
   const mapRef = useRef(null);
   const mapContainerRef = useRef(null);
 
@@ -17,5 +25,7 @@ export default function Map() {
     };
   }, []);
 
-  return <div className="h-full w-full" id="map-container" ref={mapContainerRef} />;
+  return <div className="h-full w-full rounded-lg" id="map-container" ref={mapContainerRef} />;
 }
+
+export default Map;
