@@ -73,7 +73,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
         columnDefs={columns}
         rowClassRules={rowClassRules} // Apply conditional styling
         onRowClicked={handleRowClick} // Handle row clicks
-        domLayout="autoHeight"
+        domLayout="normal"
         pagination={true}
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 15, 20]}
