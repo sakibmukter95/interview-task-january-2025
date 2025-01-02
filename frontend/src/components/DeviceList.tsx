@@ -50,7 +50,7 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="h-3/4 w-full">
       {/* Filter Dropdown */}
       <div className="flex items-center justify-between mb-4">
         <label className="p-2 bg-green-100 text-teal-700">

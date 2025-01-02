@@ -21,7 +21,7 @@ function App(): React.JSX.Element {
   return (
     <div>
       <Headers />
-      <div className="w-screen h-screen flex px-20 pt-10 gap-4">
+      <div className="max-w-screen h-screen flex px-20 pt-10 gap-4">
         <DeviceList devices={devices} onDeviceSelect={setSelectedDevice} />
         <Map devices={devices} selectedDevice={selectedDevice} />
       </div>
