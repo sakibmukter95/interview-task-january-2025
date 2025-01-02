@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { loadDevices } from "../services/dataLoader";
+import { loadDevices } from "../services/deviceLoader";
 
 export const getAllDevices = (req: Request, res: Response) => {
   const devices = loadDevices();
