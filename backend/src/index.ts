@@ -1,18 +1,22 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import deviceRoutes from "./routes/deviceRoutes";
+import bodyParser from "body-parser";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
-const port = 3000;
+const port = 8000;
 
 app.use(cors());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello from Express with TypeScript!");
-});
+// Middleware
+app.use(bodyParser.json());
 
-app.get("/test", (req: Request, res: Response) => {
-  res.send([{ name: "test" }, { name: "test123" }, { name: "321" }]);
-});
+//Routes
+app.use("/api/devices", deviceRoutes);
+
+// Global Error Handler
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`[backend]: Server is running at port: ${port}`);
