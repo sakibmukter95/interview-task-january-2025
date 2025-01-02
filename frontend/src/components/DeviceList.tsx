@@ -25,47 +25,51 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
     { headerName: "Name", field: "name", sortable: true, filter: true },
     { headerName: "Status", field: "status", sortable: true, filter: true },
     {
-      headerName: "Location (latitude, longitude)", flex: 1.5,
+      headerName: "Location (latitude, longitude)",
+      flex: 1.5,
       valueGetter: (params: any) =>
         `${params.data.latitude}, ${params.data.longitude}`,
     },
   ]);
 
-    // Row Class Rules for Conditional Styling
-    const rowClassRules = {
-      "bg-gray-200": (params: any) =>
-        params.data.id === selectedDeviceId, // Apply gray background for selected row
-    };
-  
-    // Handle Row Click
-    const handleRowClick = (row: any) => {
-      if (row.data.id === selectedDeviceId) {
-        // Reset selection if the same row is clicked again
-        setSelectedDeviceId(null);
-        onDeviceSelect(null);
-      } else {
-        setSelectedDeviceId(row.data.id);
-        onDeviceSelect(row.data);
-      }
-    };
-    
+  // Row Class Rules for Conditional Styling
+  const rowClassRules = {
+    "bg-gray-200": (params: any) => params.data.id === selectedDeviceId, // Apply gray background for selected row
+  };
+
+  // Handle Row Click
+  const handleRowClick = (row: any) => {
+    if (row.data.id === selectedDeviceId) {
+      // Reset selection if the same row is clicked again
+      setSelectedDeviceId(null);
+      onDeviceSelect(null);
+    } else {
+      setSelectedDeviceId(row.data.id);
+      onDeviceSelect(row.data);
+    }
+  };
 
   return (
     <div className="h-full w-full">
       {/* Filter Dropdown */}
-      <div className="flex justify-end mb-4">
-        <label className="p-2 justify-center">Filter by Status:</label>
-        <select
-          className="p-2 border rounded"
-          value={filterStatus}
-          onChange={(e) =>
-            setFilterStatus(e.target.value as "all" | "active" | "inactive")
-          }
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+      <div className="flex items-center justify-between mb-4">
+        <label className="p-2 bg-green-100 text-teal-700">
+          List of {filterStatus} Devices
+        </label>
+        <div className="flex items-center space-x-2">
+          <label className="p-2">Filter by Status:</label>
+          <select
+            className="p-2 border rounded"
+            value={filterStatus}
+            onChange={(e) =>
+              setFilterStatus(e.target.value as "all" | "active" | "inactive")
+            }
+          >
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
       </div>
 
       <AgGridReact
