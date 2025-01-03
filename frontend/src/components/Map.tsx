@@ -13,10 +13,10 @@ mapboxgl.accessToken =
   "pk.eyJ1IjoiaHNqb2hhbnNlbiIsImEiOiJjbTVlOWQ1cDAyNnR4MmxyNzJtZmhvMmVmIn0.aRUwNHNNmYO7e0TrCs7Ksg";
 
 const Map: React.FC<MapProps> = ({ devices, selectedDevice }) => {
-  const mapRef = useRef(null);
-  const mapContainerRef = useRef(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const selectedMarkerRef = useRef<mapboxgl.Marker | null>(null);
 
-  // Default map view coordinates and zoom level
   const defaultView: { center: [number, number]; zoom: number } = {
     center: [0, 0], // Center of the map (longitude, latitude)
     zoom: 2,
@@ -34,7 +34,7 @@ const Map: React.FC<MapProps> = ({ devices, selectedDevice }) => {
 
     // Add all device markers to the map initially
     devices.forEach((device) => {
-      new mapboxgl.Marker()
+      new mapboxgl.Marker({ color: "blue" })
         .setLngLat([device.longitude, device.latitude])
         .addTo(mapRef.current!);
     });
@@ -44,6 +44,11 @@ const Map: React.FC<MapProps> = ({ devices, selectedDevice }) => {
   useEffect(() => {
     if (!mapRef.current) return;
 
+    // Remove the previous selected marker if it exists
+    if (selectedMarkerRef.current) {
+      selectedMarkerRef.current.remove();
+    }
+
     if (selectedDevice) {
       // Fly to the selected device location
       mapRef.current.flyTo({
@@ -52,9 +57,12 @@ const Map: React.FC<MapProps> = ({ devices, selectedDevice }) => {
       });
 
       // Add a marker for the selected device
-      new mapboxgl.Marker({ color: "red" }) // Use a different color for the selected device
+      const marker = new mapboxgl.Marker({ color: "red" })
         .setLngLat([selectedDevice.longitude, selectedDevice.latitude])
         .addTo(mapRef.current);
+
+      // Track the currently selected marker
+      selectedMarkerRef.current = marker;
     } else {
       // Reset to the default map view when no device is selected
       mapRef.current.flyTo({
