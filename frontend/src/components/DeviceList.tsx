@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  ColDef,
+  RowClassRules,
+  RowClickedEvent,
+} from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { Device, DeviceStatus } from "../model/Device";
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -10,10 +16,9 @@ interface DeviceListProps {
 }
 
 const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
-  const [filterStatus, setFilterStatus] = useState<"all" | DeviceStatus>(
-    "all"
-  );
+  const [filterStatus, setFilterStatus] = useState<"all" | DeviceStatus>("all");
   const [selectedDeviceId, setSelectedDeviceId] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // Filter devices based on the selected status
   const filteredDevices = devices.filter(
@@ -21,34 +26,47 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
   );
 
   // Column Definitions: Defines the columns to be displayed.
-  const [columns] = useState<any[]>([
+  const [columns] = useState<ColDef[]>([
     { headerName: "Name", field: "name", sortable: true, filter: true },
     { headerName: "Status", field: "status", sortable: true, filter: true },
     {
       headerName: "Location (latitude, longitude)",
       flex: 1.5,
-      valueGetter: (params: any) =>
+      valueGetter: (params) =>
         `${params.data.latitude}, ${params.data.longitude}`,
     },
   ]);
 
   // Row Class Rules for Conditional Styling
-  const rowClassRules = {
-    "bg-gray-200": (params: any) => params.data.id === selectedDeviceId,
+  const rowClassRules: RowClassRules = {
+    "bg-gray-200": (params) => params.data.id === selectedDeviceId,
   };
+
+  // Handle Click Outside to Deselect
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (gridRef.current && !gridRef.current.contains(event.target as Node)) {
+        setSelectedDeviceId(null);
+        onDeviceSelect(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [onDeviceSelect]);
 
   // Handle Row Click
-  const handleRowClick = (row: any) => {
-    if (row.data.id === selectedDeviceId) {
-      // Reset selection if the same row is clicked again
-      setSelectedDeviceId(null);
-      onDeviceSelect(null);
-    } else {
-      setSelectedDeviceId(row.data.id);
-      onDeviceSelect(row.data);
+  const handleRowClick = (row: RowClickedEvent) => {
+    const selectedDevice = row.data as Device;
+  
+    if (selectedDeviceId !== selectedDevice.id) {
+      setSelectedDeviceId(selectedDevice.id);
+      onDeviceSelect(selectedDevice); // Only call when the selection changes
     }
   };
-
+  
   return (
     <div className="h-3/4 w-full">
       {/* Filter Dropdown */}
@@ -71,17 +89,18 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
           </select>
         </div>
       </div>
-
-      <AgGridReact
-        rowData={filteredDevices}
-        columnDefs={columns}
-        rowClassRules={rowClassRules} // Apply conditional styling
-        onRowClicked={handleRowClick} // Handle row clicks
-        domLayout="normal"
-        pagination={true}
-        paginationPageSize={10}
-        paginationPageSizeSelector={[10, 15, 20]}
-      />
+      <div ref={gridRef} className="h-full w-full">
+        <AgGridReact
+          rowData={filteredDevices}
+          columnDefs={columns}
+          rowClassRules={rowClassRules} // Apply conditional styling
+          onRowClicked={handleRowClick} // Handle row clicks
+          domLayout="normal"
+          pagination={true}
+          paginationPageSize={10}
+          paginationPageSizeSelector={[10, 15, 20]}
+        />
+      </div>
     </div>
   );
 };
