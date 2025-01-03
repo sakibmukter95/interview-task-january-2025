@@ -60,7 +60,6 @@ const DeviceList: React.FC<DeviceListProps> = ({ devices, onDeviceSelect }) => {
   // Handle Row Click
   const handleRowClick = (row: RowClickedEvent) => {
     const selectedDevice = row.data as Device;
-  
     if (selectedDeviceId !== selectedDevice.id) {
       setSelectedDeviceId(selectedDevice.id);
       onDeviceSelect(selectedDevice); // Only call when the selection changes
